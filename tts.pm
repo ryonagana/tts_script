@@ -8,7 +8,7 @@ use Data::Dumper;
 
 use HTTP::Request;
 use URI;
-#use LWP::Simple;
+use LWP::Simple;
 
 
 my $path = "";
