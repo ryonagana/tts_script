@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/perl
 
 use strict;
 use warnings;
@@ -8,11 +8,11 @@ use Data::Dumper;
 
 use HTTP::Request;
 use URI;
-use LWP::Simple;
+#use LWP::Simple;
 
 
 my $path = "";
-$path = $ARGV[0] or die "no params";
+$path = $ARGV[0];
 
 
 
@@ -21,26 +21,19 @@ my $language='pt'; #put your language here
 
 sub translate {
     
-    if(!defined $ARGV[1] || $ARGV[1] eq ""){
+    if(!defined $ARGV[0] || $ARGV[0] eq ""){
         die "output filename not found";
         exit;
    }
     
-
+    my ($input)  = @_;
     my $fp;
     my $content = "";
-    
-    open($fp, '<', $path) or die "invalid file";
-    
+   
 
-    
-    while(<$fp>){
-    
-        $content .= $_;
-    
-    }
-    
-    close($fp);
+    $content = <STDIN>;
+
+  
     
     my $uri = URI->new('https://translate.google.com/translate_tts');
     $uri->query_form('q' => $content, 'ie' => 'UTF-8', 'client'=>'tw-ob', 'tl'=> $language );
@@ -58,16 +51,40 @@ sub translate {
 
     
    
-   open($fp, ">", $ARGV[1] . '.mp3') or die "invalid file";
+   open($fp, ">", $ARGV[0] . '.mp3') or die "invalid file";
    binmode $fp;
    print $fp $sound_file;
    close($fp);
-   print "\n$ARGV[1].mp3 success!\n\n";
+   print "\n$ARGV[0].mp3 success!\n\n";
   
 
 }
 
-translate();
+
+sub list_dependencies{
+  
+  my $list =  join("\n", map { s|/|::|g; s|\.pm$||; $_ } keys %INC);
+
+ 
+  my $fp;
+  open($fp, ">","dependencies.txt") or die $!;
+  
+  print $fp $list;
+  print $list;
+  close($fp);
+}
+
+
+
+
+if($ARGV[0] eq "--deps" ){
+  list_dependencies();
+  exit;
+}
+
+
+
+translate(<STDIN>);
 
 
 
