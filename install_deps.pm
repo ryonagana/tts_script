@@ -30,10 +30,12 @@ while(<$fp>){
       install_module($_);
     }
 
+
+
 }
 
 
-
+close($fp);
 
 
 
