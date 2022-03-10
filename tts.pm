@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+use utf8;
 use strict;
 use warnings;
 use diagnostics;
@@ -17,6 +18,20 @@ $path = $ARGV[0];
 
 
 my $language='pt'; #put your language here
+
+
+
+sub print_error_output {
+	
+	my ($text) = @_;
+	my $fp;
+	
+	open($fp, ">", "error.html") or die "File is Invalid";
+	binmode($fp, "encoding(UTF-8)");
+	print $fp $text;
+	close ($fp);
+
+}
 
 
 sub translate {
@@ -48,11 +63,21 @@ sub translate {
    my $response = $agent->request($request);
    my $sound_file = $response->decoded_content();
    
+   my $code = $response->code();
+   
+   print "Response Code: $code\n\n";
+   
+   if(!$response->is_success){
+		print "Invalid Response..\n\n";
+		print_error_output($sound_file);
+		exit;
+   }
+   
 
     
    
    open($fp, ">", $ARGV[0] . '.mp3') or die "invalid file";
-   binmode $fp;
+   binmode ($fp, "encoding(UTF-8)");
    print $fp $sound_file;
    close($fp);
    print "\n$ARGV[0].mp3 success!\n\n";
